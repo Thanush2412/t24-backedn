@@ -9,7 +9,6 @@ require('dotenv').config();
 const db = require('./services/database');
 
 const app = express();
-const PORT = process.env.PORT || 5000;
 
 // Configure multer for file uploads
 const upload = multer({ 
@@ -21,7 +20,7 @@ const upload = multer({
 
 // Middleware
 app.use(cors({
-  origin: process.env.CORS_ORIGIN || 'http://localhost:5173', // Use env variable for CORS origin
+  origin: process.env.CORS_ORIGIN || 'http://localhost:5173',
   credentials: true
 }));
 app.use(express.json());
@@ -51,7 +50,6 @@ app.post('/api/auth/login', async (req, res) => {
   try {
     const { username, password } = req.body;
     
-    // Simple admin authentication (you can enhance this)
     const adminUsername = process.env.ADMIN_USERNAME || 'admin';
     const adminPassword = process.env.ADMIN_PASSWORD || 'tech24admin';
     
@@ -307,6 +305,7 @@ app.get('/api/health', async (req, res) => {
 
 // Configuration endpoint (non-sensitive info only)
 app.get('/api/config', (req, res) => {
+  const PORT = process.env.PORT || 5000;
   res.json({
     server: {
       port: PORT,
@@ -329,51 +328,15 @@ app.get('/api/config', (req, res) => {
   });
 });
 
-// Initialize and start server
-async function startServer() {
-  try {
-    // Test database connection
-    await db.healthCheck();
-    console.log('✅ Database connection successful');
-    
-    const server = app.listen(PORT, () => {
-      console.log(`🚀 TECH24 Backend API running on port ${PORT}`);
-      console.log(`🔗 Using Supabase database`);
-      console.log(`🌐 CORS origin: ${process.env.CORS_ORIGIN || 'http://localhost:5173'}`);
-      console.log(`🌍 Frontend URL: ${process.env.FRONTEND_URL || 'http://localhost:5173'}`);
-      console.log(`🔗 API Base URL: ${process.env.API_BASE_URL || `http://localhost:${PORT}`}`);
-      console.log(`🪣 Storage bucket: ${process.env.STORAGE_BUCKET || 'visionreports'}`);
-      console.log(`🔐 Admin credentials: ${process.env.ADMIN_USERNAME || 'admin'}/${process.env.ADMIN_PASSWORD || 'tech24admin'}`);
-      console.log(`🔑 JWT Secret: ${process.env.JWT_SECRET ? '***configured***' : '***using fallback***'}`);
-    });
-
-    server.on('error', (error) => {
-      if (error.code === 'EADDRINUSE') {
-        console.log(`❌ Port ${PORT} is busy, trying another port...`);
-        server.listen(0, () => {
-          console.log(`🚀 TECH24 Backend API running on port ${server.address().port}`);
-        });
-      } else {
-        console.error('❌ Server error:', error);
-        process.exit(1);
-      }
-    });
-
-  } catch (error) {
-    console.error('❌ Failed to start server:', error);
-    process.exit(1);
-  }
-}
-
-// Handle graceful shutdown
-process.on('SIGTERM', () => {
-  console.log('SIGTERM received');
-  process.exit(0);
+// Root route
+app.get('/', (req, res) => {
+  res.json({
+    message: 'TECH24 Backend API',
+    version: '1.0.0',
+    status: 'running',
+    timestamp: new Date().toISOString()
+  });
 });
 
-process.on('SIGINT', () => {
-  console.log('SIGINT received');
-  process.exit(0);
-});
-
-startServer();
+// Export for Vercel
+module.exports = app;
