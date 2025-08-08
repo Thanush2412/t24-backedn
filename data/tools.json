@@ -1,0 +1,14 @@
+[
+  {
+    "name": "VS Code",
+    "icon": "https://rsioktfxukraqlwowcgc.supabase.co/storage/v1/object/public/visionreports/logo-microsoft-vs-code-svgrepo-com.svg"
+  },
+  {
+    "name": "Git",
+    "icon": "https://rsioktfxukraqlwowcgc.supabase.co/storage/v1/object/public/visionreports/git-svgrepo-com.svg"
+  },
+  {
+    "name": "Figma",
+    "icon": "https://rsioktfxukraqlwowcgc.supabase.co/storage/v1/object/public/visionreports/figma-svgrepo-com.svg"
+  }
+]

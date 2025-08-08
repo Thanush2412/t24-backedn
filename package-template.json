@@ -1,0 +1,49 @@
+{
+  "name": "tech24-portfolio-backend",
+  "version": "1.0.0",
+  "description": "Backend server for TECH24 portfolio website",
+  "main": "server.js",
+  "engines": {
+    "node": ">=16.0.0",
+    "npm": ">=7.0.0"
+  },
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js",
+    "setup-db": "node scripts/setup-database.js",
+    "migrate-data": "node scripts/migrate-data.js",
+    "migrate-all": "node scripts/migrate-all-data.js",
+    "update-images": "node scripts/update-image-paths.js",
+    "update-all-images": "node scripts/update-all-images.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "portfolio",
+    "backend",
+    "express",
+    "supabase",
+    "api",
+    "tech24"
+  ],
+  "author": "TECH24",
+  "license": "MIT",
+  "dependencies": {
+    "@supabase/supabase-js": "^2.54.0",
+    "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
+    "express": "^4.19.2",
+    "jsonwebtoken": "^9.0.2",
+    "multer": "^1.4.5-lts.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.6"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/your-username/tech24-portfolio.git"
+  },
+  "bugs": {
+    "url": "https://github.com/your-username/tech24-portfolio/issues"
+  },
+  "homepage": "https://github.com/your-username/tech24-portfolio#readme"
+}

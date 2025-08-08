@@ -1,0 +1,22 @@
+[
+  {
+    "name": "JavaScript",
+    "level": 95
+  },
+  {
+    "name": "React",
+    "level": 90
+  },
+  {
+    "name": "Node.js",
+    "level": 85
+  },
+  {
+    "name": "TypeScript",
+    "level": 80
+  },
+  {
+    "name": "Python",
+    "level": 75
+  }
+]
