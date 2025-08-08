@@ -37,14 +37,49 @@ Copy the example environment file and configure it:
 cp .env.example .env
 ```
 
-Edit `.env` with your Supabase credentials:
+Edit `.env` with your configuration:
+
+#### Required Environment Variables
 ```env
+# Database Configuration
 SUPABASE_URL=https://yourproject.supabase.co
 SUPABASE_ANON_KEY=your_supabase_anon_key_here
+
+# Server Configuration
 PORT=5000
 NODE_ENV=development
+
+# CORS & URL Configuration
 CORS_ORIGIN=http://localhost:5173
+FRONTEND_URL=http://localhost:5173
+API_BASE_URL=http://localhost:5000
+
+# Authentication
+JWT_SECRET=your-super-secure-jwt-secret-here
+ADMIN_USERNAME=admin
+ADMIN_PASSWORD=tech24admin
+
+# Storage
+STORAGE_BUCKET=visionreports
 ```
+
+#### Environment Variable Descriptions
+
+| Variable | Description | Default | Required |
+|----------|-------------|---------|----------|
+| `SUPABASE_URL` | Your Supabase project URL | - | ✅ |
+| `SUPABASE_ANON_KEY` | Your Supabase anonymous key | - | ✅ |
+| `PORT` | Server port number | `5000` | ❌ |
+| `NODE_ENV` | Environment mode | `development` | ❌ |
+| `CORS_ORIGIN` | Allowed CORS origin URL | `http://localhost:5173` | ❌ |
+| `FRONTEND_URL` | Frontend application URL | `http://localhost:5173` | ❌ |
+| `API_BASE_URL` | API base URL for link generation | `http://localhost:5000` | ❌ |
+| `JWT_SECRET` | Secret key for JWT tokens | fallback-secret | ⚠️ |
+| `ADMIN_USERNAME` | Admin panel username | `admin` | ❌ |
+| `ADMIN_PASSWORD` | Admin panel password | `tech24admin` | ❌ |
+| `STORAGE_BUCKET` | Supabase storage bucket name | `visionreports` | ❌ |
+
+> **⚠️ Security Note**: Always set a custom `JWT_SECRET` in production!
 
 ### 4. Database Setup
 Run the database migration script:

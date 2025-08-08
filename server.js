@@ -21,7 +21,7 @@ const upload = multer({
 
 // Middleware
 app.use(cors({
-  origin: 'http://localhost:5173',// Vite dev server
+  origin: process.env.CORS_ORIGIN || 'http://localhost:5173', // Use env variable for CORS origin
   credentials: true
 }));
 app.use(express.json());
@@ -305,6 +305,30 @@ app.get('/api/health', async (req, res) => {
   }
 });
 
+// Configuration endpoint (non-sensitive info only)
+app.get('/api/config', (req, res) => {
+  res.json({
+    server: {
+      port: PORT,
+      nodeEnv: process.env.NODE_ENV || 'development',
+      corsOrigin: process.env.CORS_ORIGIN || 'http://localhost:5173',
+      frontendUrl: process.env.FRONTEND_URL || 'http://localhost:5173',
+      apiBaseUrl: process.env.API_BASE_URL || `http://localhost:${PORT}`,
+    },
+    storage: {
+      bucket: process.env.STORAGE_BUCKET || 'visionreports',
+    },
+    auth: {
+      jwtConfigured: !!process.env.JWT_SECRET,
+      adminUsername: process.env.ADMIN_USERNAME || 'admin',
+    },
+    database: {
+      supabaseConfigured: !!(process.env.SUPABASE_URL && process.env.SUPABASE_ANON_KEY),
+    },
+    timestamp: new Date().toISOString()
+  });
+});
+
 // Initialize and start server
 async function startServer() {
   try {
@@ -315,8 +339,12 @@ async function startServer() {
     app.listen(PORT, () => {
       console.log(`🚀 TECH24 Backend API running on port ${PORT}`);
       console.log(`🔗 Using Supabase database`);
+      console.log(`🌐 CORS origin: ${process.env.CORS_ORIGIN || 'http://localhost:5173'}`);
+      console.log(`🌍 Frontend URL: ${process.env.FRONTEND_URL || 'http://localhost:5173'}`);
+      console.log(`🔗 API Base URL: ${process.env.API_BASE_URL || `http://localhost:${PORT}`}`);
       console.log(`🪣 Storage bucket: ${process.env.STORAGE_BUCKET || 'visionreports'}`);
       console.log(`🔐 Admin credentials: ${process.env.ADMIN_USERNAME || 'admin'}/${process.env.ADMIN_PASSWORD || 'tech24admin'}`);
+      console.log(`🔑 JWT Secret: ${process.env.JWT_SECRET ? '***configured***' : '***using fallback***'}`);
     });
   } catch (error) {
     console.error('❌ Failed to start server:', error);
