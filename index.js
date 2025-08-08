@@ -343,5 +343,119 @@ app.get('/', (req, res) => {
   });
 });
 
+// Contact Form Submission Route
+app.post('/api/contact', async (req, res) => {
+  try {
+    const { name, email, subject, message } = req.body;
+    
+    // Validate required fields
+    if (!name || !email || !subject || !message) {
+      return res.status(400).json({ 
+        error: 'All fields are required (name, email, subject, message)' 
+      });
+    }
+    
+    // Store contact submission in database
+    const contactSubmission = await db.createContactSubmission({
+      name,
+      email,
+      subject,
+      message
+    });
+    
+    console.log('📧 New contact submission received:', {
+      name,
+      email,
+      subject,
+      timestamp: new Date().toISOString()
+    });
+    
+    res.json({
+      success: true,
+      message: 'Contact form submitted successfully',
+      submissionId: contactSubmission.id
+    });
+  } catch (error) {
+    console.error('Error handling contact submission:', error);
+    res.status(500).json({ error: 'Failed to submit contact form' });
+  }
+});
+
+// Project Form Submission Route
+app.post('/api/project-booking', async (req, res) => {
+  try {
+    const { 
+      name, 
+      phone, 
+      email, 
+      projectTitle, 
+      projectDescription,
+      projectType,
+      subcategory,
+      existingProjectDetails,
+      languagesUsed
+    } = req.body;
+    
+    // Validate required fields
+    if (!name || !email || !projectTitle || !projectDescription) {
+      return res.status(400).json({ 
+        error: 'Required fields missing (name, email, projectTitle, projectDescription)' 
+      });
+    }
+    
+    // Store project booking in database
+    const projectBooking = await db.createProjectBooking({
+      name,
+      phone,
+      email,
+      projectTitle,
+      projectDescription,
+      projectType,
+      subcategory,
+      existingProjectDetails,
+      languagesUsed
+    });
+    
+    console.log('🎯 New project booking received:', {
+      name,
+      email,
+      projectTitle,
+      projectType,
+      timestamp: new Date().toISOString()
+    });
+    
+    res.json({
+      success: true,
+      message: 'Project booking submitted successfully',
+      bookingId: projectBooking.id
+    });
+  } catch (error) {
+    console.error('Error handling project booking:', error);
+    res.status(500).json({ error: 'Failed to submit project booking' });
+  }
+});
+
+// Get Contact Submissions (Admin only)
+app.get('/api/contact-submissions', authenticateToken, async (req, res) => {
+  try {
+    const submissions = await db.getContactSubmissions();
+    res.json(submissions);
+  } catch (error) {
+    console.error('Error fetching contact submissions:', error);
+    res.status(500).json({ error: 'Failed to fetch contact submissions' });
+  }
+});
+
+// Get Project Bookings (Admin only)
+app.get('/api/project-bookings', authenticateToken, async (req, res) => {
+  try {
+    const bookings = await db.getProjectBookings();
+    res.json(bookings);
+  } catch (error) {
+    console.error('Error fetching project bookings:', error);
+    res.status(500).json({ error: 'Failed to fetch project bookings' });
+  }
+});
+
 // Export for Vercel
 module.exports = app;

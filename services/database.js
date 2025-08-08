@@ -422,6 +422,99 @@ class DatabaseService {
       throw new Error(`Database health check failed: ${error.message}`);
     }
   }
+
+  // Contact form submissions
+  async createContactSubmission(submission) {
+    try {
+      const { data, error } = await supabase
+        .from('contact_submissions')
+        .insert([{
+          name: submission.name,
+          email: submission.email,
+          subject: submission.subject,
+          message: submission.message,
+          created_at: new Date().toISOString()
+        }])
+        .select()
+        .single();
+
+      if (error) {
+        throw new Error(`Failed to create contact submission: ${error.message}`);
+      }
+
+      return data;
+    } catch (error) {
+      console.error('Database error creating contact submission:', error);
+      throw error;
+    }
+  }
+
+  async getContactSubmissions() {
+    try {
+      const { data, error } = await supabase
+        .from('contact_submissions')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        throw new Error(`Failed to fetch contact submissions: ${error.message}`);
+      }
+
+      return data || [];
+    } catch (error) {
+      console.error('Database error fetching contact submissions:', error);
+      throw error;
+    }
+  }
+
+  // Project booking submissions
+  async createProjectBooking(booking) {
+    try {
+      const { data, error } = await supabase
+        .from('project_bookings')
+        .insert([{
+          name: booking.name,
+          phone: booking.phone,
+          email: booking.email,
+          project_title: booking.projectTitle,
+          project_description: booking.projectDescription,
+          project_type: booking.projectType,
+          subcategory: booking.subcategory,
+          existing_project_details: booking.existingProjectDetails,
+          languages_used: booking.languagesUsed,
+          created_at: new Date().toISOString()
+        }])
+        .select()
+        .single();
+
+      if (error) {
+        throw new Error(`Failed to create project booking: ${error.message}`);
+      }
+
+      return data;
+    } catch (error) {
+      console.error('Database error creating project booking:', error);
+      throw error;
+    }
+  }
+
+  async getProjectBookings() {
+    try {
+      const { data, error } = await supabase
+        .from('project_bookings')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        throw new Error(`Failed to fetch project bookings: ${error.message}`);
+      }
+
+      return data || [];
+    } catch (error) {
+      console.error('Database error fetching project bookings:', error);
+      throw error;
+    }
+  }
 }
 
 module.exports = new DatabaseService();
