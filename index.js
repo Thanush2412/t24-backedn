@@ -20,7 +20,12 @@ const upload = multer({
 
 // Middleware
 app.use(cors({
-  origin: process.env.CORS_ORIGIN || 'http://localhost:5173',
+  origin: [
+    'http://localhost:5173',
+    'https://tech24-web.web.app',
+    'https://tech24-web.firebaseapp.com',
+    process.env.CORS_ORIGIN
+  ].filter(Boolean),
   credentials: true
 }));
 app.use(express.json());
