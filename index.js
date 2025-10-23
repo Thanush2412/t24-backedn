@@ -7,6 +7,8 @@ require('dotenv').config();
 
 // Import the new database service
 const db = require('./services/database');
+// Import email service
+const emailService = require('./services/emailService');
 
 const app = express();
 
@@ -343,15 +345,52 @@ app.get('/', (req, res) => {
   });
 });
 
+// Test Email Endpoint (for testing Brevo SMTP)
+app.post('/api/test-email', async (req, res) => {
+  try {
+    const { email, name } = req.body;
+    
+    if (!email || !name) {
+      return res.status(400).json({ 
+        error: 'Email and name are required for testing' 
+      });
+    }
+    
+    const testResult = await emailService.sendAutoReply({
+      name,
+      email,
+      subject: 'Test Email',
+      message: 'This is a test email to verify Brevo SMTP integration.'
+    }, 'contact');
+    
+    if (testResult.success) {
+      res.json({
+        success: true,
+        message: 'Test email sent successfully',
+        messageId: testResult.messageId
+      });
+    } else {
+      res.status(500).json({
+        success: false,
+        error: 'Failed to send test email',
+        details: testResult.error
+      });
+    }
+  } catch (error) {
+    console.error('Error sending test email:', error);
+    res.status(500).json({ error: 'Failed to send test email' });
+  }
+});
+
 // Contact Form Submission Route
 app.post('/api/contact', async (req, res) => {
   try {
     const { name, email, subject, message } = req.body;
     
     // Validate required fields
-    if (!name || !email || !subject || !message) {
+    if (!name || !email || !message) {
       return res.status(400).json({ 
-        error: 'All fields are required (name, email, subject, message)' 
+        error: 'Required fields missing (name, email, message)' 
       });
     }
     
@@ -359,16 +398,43 @@ app.post('/api/contact', async (req, res) => {
     const contactSubmission = await db.createContactSubmission({
       name,
       email,
-      subject,
+      subject: subject || 'General Inquiry',
       message
     });
     
     console.log('📧 New contact submission received:', {
       name,
       email,
-      subject,
+      subject: subject || 'General Inquiry',
       timestamp: new Date().toISOString()
     });
+    
+    // Send email notifications
+    try {
+      // Send notification to admin
+      const adminEmailResult = await emailService.sendAdminNotification({
+        name,
+        email,
+        subject: subject || 'General Inquiry',
+        message
+      }, 'contact');
+      
+      // Send auto-reply to client
+      const autoReplyResult = await emailService.sendAutoReply({
+        name,
+        email,
+        subject: subject || 'General Inquiry',
+        message
+      }, 'contact');
+      
+      console.log('📧 Email notifications sent:', {
+        adminEmail: adminEmailResult.success,
+        autoReply: autoReplyResult.success
+      });
+    } catch (emailError) {
+      console.error('⚠️ Email sending failed, but form was saved:', emailError);
+      // Don't fail the request if email fails
+    }
     
     res.json({
       success: true,
@@ -424,6 +490,43 @@ app.post('/api/project-booking', async (req, res) => {
       timestamp: new Date().toISOString()
     });
     
+    // Send email notifications
+    try {
+      // Send notification to admin
+      const adminEmailResult = await emailService.sendAdminNotification({
+        name,
+        phone,
+        email,
+        projectTitle,
+        projectDescription,
+        projectType,
+        subcategory,
+        existingProjectDetails,
+        languagesUsed
+      }, 'project');
+      
+      // Send auto-reply to client
+      const autoReplyResult = await emailService.sendAutoReply({
+        name,
+        phone,
+        email,
+        projectTitle,
+        projectDescription,
+        projectType,
+        subcategory,
+        existingProjectDetails,
+        languagesUsed
+      }, 'project');
+      
+      console.log('📧 Email notifications sent:', {
+        adminEmail: adminEmailResult.success,
+        autoReply: autoReplyResult.success
+      });
+    } catch (emailError) {
+      console.error('⚠️ Email sending failed, but booking was saved:', emailError);
+      // Don't fail the request if email fails
+    }
+    
     res.json({
       success: true,
       message: 'Project booking submitted successfully',
@@ -432,6 +535,17 @@ app.post('/api/project-booking', async (req, res) => {
   } catch (error) {
     console.error('Error handling project booking:', error);
     res.status(500).json({ error: 'Failed to submit project booking' });
+  }
+});
+
+// Get Contact Submissions (Admin only) - Alternative endpoint name
+app.get('/api/contacts', authenticateToken, async (req, res) => {
+  try {
+    const submissions = await db.getContactSubmissions();
+    res.json(submissions);
+  } catch (error) {
+    console.error('Error fetching contact submissions:', error);
+    res.status(500).json({ error: 'Failed to fetch contact submissions' });
   }
 });
 
