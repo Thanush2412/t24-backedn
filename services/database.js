@@ -431,7 +431,7 @@ class DatabaseService {
         .insert([{
           name: submission.name,
           email: submission.email,
-          subject: submission.subject,
+          subject: submission.subject || 'General Inquiry',
           message: submission.message,
           created_at: new Date().toISOString()
         }])
