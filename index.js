@@ -382,6 +382,25 @@ app.post('/api/test-email', async (req, res) => {
   }
 });
 
+// Test database connection
+app.get('/api/test-db', async (req, res) => {
+  try {
+    const testResult = await db.getPersonalInfo();
+    res.json({ 
+      success: true, 
+      message: 'Database connection successful',
+      data: testResult 
+    });
+  } catch (error) {
+    console.error('Database test failed:', error);
+    res.status(500).json({ 
+      success: false, 
+      error: 'Database connection failed',
+      details: error.message 
+    });
+  }
+});
+
 // Contact Form Submission Route
 app.post('/api/contact', async (req, res) => {
   try {
@@ -443,7 +462,15 @@ app.post('/api/contact', async (req, res) => {
     });
   } catch (error) {
     console.error('Error handling contact submission:', error);
-    res.status(500).json({ error: 'Failed to submit contact form' });
+    console.error('Error details:', {
+      message: error.message,
+      stack: error.stack,
+      name: error.name
+    });
+    res.status(500).json({ 
+      error: 'Failed to submit contact form',
+      details: error.message 
+    });
   }
 });
 

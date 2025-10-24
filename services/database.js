@@ -426,6 +426,8 @@ class DatabaseService {
   // Contact form submissions
   async createContactSubmission(submission) {
     try {
+      console.log('Creating contact submission:', submission);
+      
       const { data, error } = await supabase
         .from('contact_submissions')
         .insert([{
@@ -439,9 +441,11 @@ class DatabaseService {
         .single();
 
       if (error) {
+        console.error('Supabase error:', error);
         throw new Error(`Failed to create contact submission: ${error.message}`);
       }
 
+      console.log('Contact submission created successfully:', data);
       return data;
     } catch (error) {
       console.error('Database error creating contact submission:', error);

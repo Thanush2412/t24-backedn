@@ -7,8 +7,8 @@ const createTransporter = () => {
     port: 587,
     secure: false, // true for 465, false for other ports
     auth: {
-      user: '971def001@smtp-brevo.com',
-      pass: 'ISnbFdDzrpXKHWJf'
+      user: process.env.BREVO_USER || '971def001@smtp-brevo.com',
+      pass: process.env.BREVO_PASS || 'ISnbFdDzrpXKHWJf'
     },
     tls: {
       rejectUnauthorized: false
