@@ -481,18 +481,18 @@ app.post('/api/project-booking', async (req, res) => {
       name, 
       phone, 
       email, 
-      projectTitle, 
-      projectDescription,
-      projectType,
+      project_title, 
+      project_description,
+      project_type,
       subcategory,
-      existingProjectDetails,
-      languagesUsed
+      existing_project_details,
+      languages_used
     } = req.body;
     
     // Validate required fields
-    if (!name || !email || !projectTitle || !projectDescription) {
+    if (!name || !email || !project_title || !project_description) {
       return res.status(400).json({ 
-        error: 'Required fields missing (name, email, projectTitle, projectDescription)' 
+        error: 'Required fields missing (name, email, project_title, project_description)' 
       });
     }
     
@@ -501,19 +501,19 @@ app.post('/api/project-booking', async (req, res) => {
       name,
       phone,
       email,
-      projectTitle,
-      projectDescription,
-      projectType,
+      project_title,
+      project_description,
+      project_type,
       subcategory,
-      existingProjectDetails,
-      languagesUsed
+      existing_project_details,
+      languages_used
     });
     
     console.log('🎯 New project booking received:', {
       name,
       email,
-      projectTitle,
-      projectType,
+      project_title,
+      project_description,
       timestamp: new Date().toISOString()
     });
     
@@ -524,12 +524,12 @@ app.post('/api/project-booking', async (req, res) => {
         name,
         phone,
         email,
-        projectTitle,
-        projectDescription,
-        projectType,
+        projectTitle: project_title,
+        projectDescription: project_description,
+        projectType: project_type,
         subcategory,
-        existingProjectDetails,
-        languagesUsed
+        existingProjectDetails: existing_project_details,
+        languagesUsed: languages_used
       }, 'project');
       
       // Send auto-reply to client
@@ -537,12 +537,12 @@ app.post('/api/project-booking', async (req, res) => {
         name,
         phone,
         email,
-        projectTitle,
-        projectDescription,
-        projectType,
+        projectTitle: project_title,
+        projectDescription: project_description,
+        projectType: project_type,
         subcategory,
-        existingProjectDetails,
-        languagesUsed
+        existingProjectDetails: existing_project_details,
+        languagesUsed: languages_used
       }, 'project');
       
       console.log('📧 Email notifications sent:', {

@@ -480,12 +480,12 @@ class DatabaseService {
           name: booking.name,
           phone: booking.phone,
           email: booking.email,
-          project_title: booking.projectTitle,
-          project_description: booking.projectDescription,
-          project_type: booking.projectType,
+          project_title: booking.project_title,
+          project_description: booking.project_description,
+          project_type: booking.project_type,
           subcategory: booking.subcategory,
-          existing_project_details: booking.existingProjectDetails,
-          languages_used: booking.languagesUsed,
+          existing_project_details: booking.existing_project_details,
+          languages_used: booking.languages_used,
           created_at: new Date().toISOString()
         }])
         .select()
